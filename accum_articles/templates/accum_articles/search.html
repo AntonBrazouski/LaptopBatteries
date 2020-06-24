@@ -1,0 +1,33 @@
+{% extends "accum_articles\base.html" %} 
+
+{% block search %}
+
+	<p>
+	  <form method="POST" action="{% url 'accum_articles:search' %}">
+		{% csrf_token %}
+		<input type="text" name="article" required  maxlength="12"/>
+		<input type="submit" value="search article"/>
+	  </form>
+	</p>
+
+{% endblock %}
+
+{% block search_results %}
+
+	{% if article_search_result %}
+		<p>Suggested  laptop models for <b>{{article_search}}</b> battery</p>
+		{% for description in article_search_result %}
+			<p> <b> {{ description.battery }}</b> / laptop model - {{ description }}</p>
+		{% endfor %}
+
+	{% elif article_search_result == None %}
+		<p>  </p>
+
+		
+	{% else %}	
+
+		<p>nothing found <b>{{ article_search }}</b></p>
+		
+	{% endif %}	
+
+{% endblock %}

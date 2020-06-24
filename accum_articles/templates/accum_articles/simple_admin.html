@@ -1,0 +1,16 @@
+{% extends "accum_articles\admin.html" %}
+
+{% block simple_admin %}
+
+
+	<p>Here is what you can do:</p>
+	<ul>
+		<li><a href="{% url 'accum_articles:simple_add' %}"> add batterys </a></li>	
+		<li><a href="{% url 'accum_articles:simple_add_desc' %}"> add battery descriptions </a></li>
+		<li><a href="{% url 'accum_articles:csv_add' %}"> add batteries from a CSV file </a></li>
+			
+	</ul>
+
+	<p><a href="{% url 'accum_articles:search_battery' %}">back to search</a></p>
+
+{% endblock %}

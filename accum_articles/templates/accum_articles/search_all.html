@@ -1,0 +1,47 @@
+{% extends "accum_articles\base.html" %} 
+
+{% block search_all %}
+	
+	{% if is_battery_search %}
+		<form method="POST" action="{% url 'accum_articles:search_battery' %}">
+	{% else %}
+		<form method="POST" action="{% url 'accum_articles:search_laptop' %}">
+	{% endif %}
+		
+		{% csrf_token %}			
+		{% if is_battery_search %}
+			<b>  battery  </b> 
+			/ <a href="{% url 'accum_articles:search_laptop' %}">  laptop model</a>
+ 
+		{% else %}
+			<a href="{% url 'accum_articles:search_battery' %}"> battery</a>  
+			/ <b> laptop model</b>
+		{% endif %}
+		</input>
+		
+		<p><input type="text" name="search" required maxlength="24" />		
+		<input type="submit" class="btn btn-primary" value="search" />
+		
+		</p>
+	  </form>
+
+	<div align="left">
+		{% if search_result %} 
+			{% for battery in search_result %}
+				<p> <b> <a href="{% url 'accum_articles:view_battery' article=battery id=battery.id is_battery_search=is_battery_search%}">{{ battery }}</a> </b>
+				 /  {{ battery.batterydescription }}</p>
+			
+			{% endfor %}
+
+		{% elif search_result == None %}
+			<p>  </p>
+
+		{% else %}	
+			<p>nothing found </p>
+		
+		{% endif %}	
+	</div>
+{% endblock %}
+
+
+
