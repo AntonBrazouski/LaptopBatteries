@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>Base Admin</title>
+  </head>
+  
+  <body>
+	<br>
+	<div class="container">
+		
+		{% if line_count %}
+
+			{% if error_message %}
+				<div class="alert alert-warning" role="alert">
+				<div class="progress">
+					<div class="progress-bar w-25" role="progressbar">{{ line_count }} / {{csv_len}}</div>
+				</div>
+					{{ error_message }} 
+				</div>
+			{% else %}
+				<p> Processing <b>{{ line_count }}</b> lines</p>
+				<div class="progress">
+					<div class="progress-bar w-100" role="progressbar" >{{ line_count }} / {{csv_len}}</div>
+				</div>
+				
+				<div class="alert alert-success" role="alert"align="center">
+					Done!
+				</div>
+			
+			{% endif %}
+			
+			<br>
+			<li><a href="{% url 'accum_articles:csv_add' %}"> back </a></li>
+			
+		{% else %}
+		
+		<h2>CSV File Upload</h2>
+		
+		<table border="2px">
+			<i>Sample format for a csv file</i>
+			<th>ID</th>
+			<th>Article</th>
+			<th>Manufacturer</th>
+			<tr>
+				<td>001</td>
+				<td>AC14B18K</td>
+				<td>ACER</td>
+			</tr>
+			</table>
+			<br>
+		
+		<form method="POST" enctype="multipart/form-data" action= {% url 'accum_articles:csv_add' %} > {% csrf_token %}
+			<!-- passes only file name  -->
+			<p><input class="btn btn-info" type="file" name="file" accept=".csv"/ ></p>
+			<br> 
+			
+			<p><input class="btn btn-primary" type="submit" value="add"  /></p>
+			
+		</form>
+		
+		{% endif %}
+		
+		<br>
+		<li><a href="{% url 'accum_articles:simple_admin' %}"> back to admin</a></li>
+	
+	</div>
+
+	<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+  </body>
+</html>
