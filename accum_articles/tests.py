@@ -4,8 +4,6 @@ from django.urls import reverse
 from accum_articles import urls 
 from django.contrib.auth import get_user_model
 
-#from accum_articles import urreversels  
-
 
 class SimpleTests(SimpleTestCase):
 	
@@ -21,32 +19,75 @@ class SimpleTests(SimpleTestCase):
 		response = self.client.get('/battery_search')
 		self.assertEqual(response.status_code, 200)
 	
-		
-class BasicBatteryTest(TestCase):
-		
+
+class AllViewsTests(TestCase):
+	
 	def setUp(self):
 		LaptopBattery.objects.create(article='test_art')
-				
-	def test_article_content(self):
-		battery = LaptopBattery.objects.get(id=1)
-		expected_object_name = f'{battery.article}'
-		self.assertEqual(expected_object_name, 'test_art') #updated
+		
+	def test_view_index_url_exist_at_proper_location(self):
+		response = self.client.get('/')
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Battery Finder')
+		self.assertTemplateUsed(response, 'accum_articles/search_all.html', 'accum_articles/base.html')
+
+		
+	def test_view_search_laptop_url_by_name(self):  
+		response = self.client.get(reverse('accum_articles:search_laptop'))		
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Battery Finder')
+		self.assertTemplateUsed(response, 'accum_articles/search_all.html', 'accum_articles/base.html')
+
+		
+	def test_view_search_battery_url_by_name(self):  
+		response = self.client.get(reverse('accum_articles:search_battery'))		
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Battery Finder')
+		self.assertTemplateUsed(response, 'accum_articles/search_all.html', 'accum_articles/base.html')
+
+
+	def test_view__battery_url_by_name(self):  
+		response = self.client.get(reverse('accum_articles:view_battery', args=(1, 'test_art',True)))		
+		self.assertEqual(response.status_code, 200)
+		no_response = self.client.get(reverse('accum_articles:view_battery', args=('2', 'test_art', 'False'))) #error	
+		self.assertContains(response, 'test_art')
+		self.assertTemplateUsed(response, 'accum_articles/battery_view.html')
+		self.assertEqual(no_response.status_code, 404) 
+	
+	def test_view_simple_admin_url_by_name(self):  
+		response = self.client.get(reverse('accum_articles:simple_admin'))		
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Welcome')
+		self.assertTemplateUsed(response, 'accum_articles/simple_admin.html')
+	
+		
+	def test_view_simple_add_url_by_name(self):
+		response = self.client.post(reverse('accum_articles:simple_add'), {
+			'article' :'new_art',
+		})	
+		self.assertEqual(response.status_code, 200)
+		#self.assertContains(response, 'new_art') # AssertionError
+
+	def test_view_csv_add_by_name(self):
+		response = self.client.get(reverse('accum_articles:csv_add'))	
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'csv') 
+
+	def test_view_csv_gen_by_name(self):
+		response = self.client.get(reverse('accum_articles:csv_gen'))	
+		self.assertEqual(response.status_code, 200)
+	
+	
+	def test_view_detail_by_name(self):
+		response = self.client.get(reverse('accum_articles:detail', args=('1'))) # ?? '1' - str ?
+		no_response = self.client.get(reverse('accum_articles:detail', args=('2'))) 	
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(no_response.status_code, 404) 
 	 
 
-class SearchAllViewTest(TestCase):
 	
-	def setUp(self):
-		LaptopBattery.objects.create(article='test_art')
-		
-	def test_view_url_exist_at_proper_location(self):
-		resp = self.client.get('/')
-		self.assertEqual(resp.status_code, 200)
-		
-	def test_view_url_by_name(self):  
-		resp = self.client.get(reverse('accum_articles:search_laptop'))		
-		self.assertEqual(resp.status_code, 200)
-	
-class AdvancedBatteryTest(TestCase):
+class BatteryTest(TestCase):
 	
 	def setUp(self):		
 		self.battery = LaptopBattery.objects.create(
@@ -60,42 +101,12 @@ class AdvancedBatteryTest(TestCase):
 	def test_absolute_url(self):
 		self.assertEqual(self.battery.get_absolute_url(), '/1/')	
 			
-	def test_battery_content(self):
-		self.assertEqual(f'{self.battery.article}', 'test_art')	
+
 	
-	def test_battery_search_view(self):
-		response = self.client.get(reverse('accum_articles:search_laptop'))	
-		self.assertContains(response, 'Battery Finder')
-		self.assertTemplateUsed(response, 'accum_articles/search_all.html', 'accum_articles/base.html')
-			
-	def test_battery_view(self):
-		response = self.client.get(reverse('accum_articles:view_battery', args=('1', 'test_art', 'False')))	
-		#response = self.client.get('/1/test_art/is_battery_search=False') #same
-		#no_response = self.client.get('/2/test_art/is_battery_search=False') #error
-		#no_response = self.client.get(reverse('accum_articles:view_battery', args=('2', 'test_art', 'False'))) #error	
 		
-		self.assertEqual(response.status_code, 200)
-		#self.assertEqual(no_response.status_code, 404) #DoesNotExist error
-		self.assertContains(response, 'test_art')
-		self.assertTemplateUsed(response, 'accum_articles/battery_view.html')
 	
-	def test_simple_add_view(self):
-		response = self.client.post('/simple_add/', {
-			'article' :'new_art',
-		})	
-		self.assertEqual(response.status_code, 200)
-		#self.assertContains(response, 'new_art') # AssertionError
-		#print(response)
-	
-	def test_simple_add_view_reverse(self):
-		response = self.client.post(reverse('accum_articles:simple_add'), {
-			'article' :'new_art',
-		})	
-		self.assertEqual(response.status_code, 200)
-		#self.assertContains(response, 'new_art') # AssertionError
-		#print(response)
 		
-		
+## unused		
 '''	
 	def test_should_set_article(self):
 		battery = LaptopBattery.objects.get(id=1)

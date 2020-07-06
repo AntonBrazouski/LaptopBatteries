@@ -14,6 +14,8 @@ from django.template import loader
 
 from .forms import ArticleForm
 
+from django.http import Http404
+
 # Create your views here.
 
 def index(request):
@@ -147,7 +149,11 @@ def search_all(request, is_battery_search=True, search='', search_result=''):
 '''
 
 def view_battery(request, article, id, is_battery_search):
-	battery = LaptopBattery.objects.get(id=id)	
+	try:
+		battery = LaptopBattery.objects.get(id=id)
+	except:
+		raise Http404("Battery does not exist")
+				
 	context = {"battery": battery, "is_battery_search":is_battery_search}
 	
 	return render(request, 'accum_articles/battery_view.html', context)
