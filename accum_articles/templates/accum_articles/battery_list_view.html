@@ -1,6 +1,18 @@
 {% extends "accum_articles/base.html" %} 
 
+
+
+
 {% block search_all %}
+
+<hr>
+{{ now }}
+
+{% for battery in batteries_list %}
+ {{ battery }} 
+{% endfor %}
+<hr>
+
 	
 	{% if is_battery_search %}
 		<form method="GET" action="{% url 'accum_articles:search_battery' %}">
@@ -29,7 +41,6 @@
 		{% if search_result %} 
 			{% for battery in search_result %}
 				<p> <b> <a href="{% url 'accum_articles:view_battery' article=battery id=battery.id is_battery_search=is_battery_search%}">{{ battery }}</a> </b>
-				<p> <b> <a href="{% url 'accum_articles:detail' pk=battery.id %}">{{ battery }}</a> </b>
 				 /  {{ battery.batterydescription }}</p>
 			
 			{% endfor %}
@@ -43,6 +54,7 @@
 		{% endif %}	
 	</div>
 {% endblock %}
+
 
 
 

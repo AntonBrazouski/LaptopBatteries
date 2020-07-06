@@ -17,7 +17,7 @@ class LaptopBattery(models.Model):
 		return self.article 
 		
 	def get_absolute_url(self):
-		return "%i" %self.id
+		return "/%i/" %self.id
 
 class BatteryDescription(models.Model):
 	

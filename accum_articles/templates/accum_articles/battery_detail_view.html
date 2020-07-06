@@ -9,44 +9,28 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     <title>Base Admin</title>
+
   </head>
   
-  <body>	  
-	<br> 	
+  <body>
+	  <p></p>
+	  {{ new_context_entry }}
+	  
 	<div class="container">
-		<h2>Add description</h2>
+		<h2>Part Number - <strong>{{ battery }}</strong></h2>
+		<ul>
+			<li>Manufacturer - <b> {{ battery.manufacturer }} </b></li>
+			<li>Compatible Part Numbers -  <b> {{ battery.batterydescription.compatible_articles }} </b></li>
+			<li>Compatible Notebooks -  <b> {{ battery.batterydescription }} </b></li>
+		</ul>
 
-		{% if batteries_list %} 		
-				<form method="POST" action= {% url 'accum_articles:simple_add_desc'  %} > {% csrf_token %}
-					Choose battery:
-					<select id="battery" name="battery_id">
-						{% for battery in batteries_list %}}
-							{% if not battery.batterydescription %}
-								<option value="{{ battery.id }}">{{ battery }}</option>
-							{% endif %}
-						{% endfor %}
-					</select>
-					<p>Compatible mobels: <input type="text" name="compatible_models" required maxlength="24" /></p>			
-					<p>Compatible articles: <input type="text" name="compatible_articles" required maxlength="24" /></p>	
-				
-					<p><input type="submit" value="add description" /></p>
-				</form>		
+		 
 
-		{% else %}
-			no batteries without a description, try to 
-			<a href="{% url 'accum_articles:simple_add' %}">add</a>
-			some
-			
-		{% endif %}
-				
-		{% if created == True %}
-			<p>Description <b> {{ description }} </b> has been successfully added!</p>
-		{% endif %}
-	
-	
-		<p><a href="{% url 'accum_articles:simple_admin' %}">back to admin</a></p>
-	
-	</div>	
+		<a href="{% url 'accum_articles:search_battery' %}">back to  battery search</a>
+
+
+		
+	</div>
 
 	<!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

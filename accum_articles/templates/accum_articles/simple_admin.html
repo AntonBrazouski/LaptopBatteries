@@ -5,10 +5,17 @@
 
 	<p>Here is what you can do:</p>
 	<ul>
-		<li><a href="{% url 'accum_articles:simple_add' %}"> add batterys </a></li>	
-		<li><a href="{% url 'accum_articles:simple_add_desc' %}"> add battery descriptions </a></li>
+		Basic
+		<hr> 
+		<li><a href="{% url 'accum_articles:simple_add' %}"> add battery </a></li>	
+		<li><a href="{% url 'accum_articles:simple_add_desc' %}"> add battery description </a></li>
+		<br>
+		<br>
+		Advanced
+		<hr>
 		<li><a href="{% url 'accum_articles:csv_add' %}"> add batteries from a CSV file </a></li>
-			
+		<li><a href="{% url 'accum_articles:csv_gen' %}"> download the batteries as a CSV file </a></li>	
+		<li><a href="{% url 'accum_articles:csv_show' %}"> show the batteries CSV file on the page (under development) </a></li>	
 	</ul>
 
 	<p><a href="{% url 'accum_articles:search_battery' %}">back to search</a></p>

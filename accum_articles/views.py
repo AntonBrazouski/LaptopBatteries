@@ -6,9 +6,13 @@ from django.urls import reverse
 from accum_articles.models import LaptopBattery, BatteryDescription
 
 from django.views.generic.edit import CreateView
+from django.views.generic import DetailView
 
 import csv
 
+from django.template import loader
+
+from .forms import ArticleForm
 
 # Create your views here.
 
@@ -16,31 +20,112 @@ def index(request):
 	return render(request, 'accum_articles/search_all.html' )
 
 
-'''
-def search_all(request, is_battery_search=True, search='', search_result=''):
+#try CBV - ListView - Search all
+
+from django.views.generic import ListView
+
+#test
+
+class BatteryListView(ListView):
+	model = LaptopBattery
+	template_name = 'accum_articles/battery_list_view.html'
+	context_object_name = 'batteries_list'
+	queryset = LaptopBattery.objects.filter(pk__lt = 10) #test
+	is_battery_search = True # hardcoded
 	
-	#if request.method == 'POST':
-	#	search = request.POST['search']
-	search = request.GET['search']
+	def get(self, request, *args, **kwargs):
+		is_battery_search = True # hardcoded
+		model = LaptopBattery
+		template_name = 'accum_articles/battery_list_view.html'
+		context_object_name = 'batteries_list'
+		queryset = LaptopBattery.objects.filter(pk__lt = 10)
+		is_battery_search = True # hardcoded	
+		return render(request, self.template_name, {
+			'is_battery_search': is_battery_search,
+		
+		})
+		
+	# try context
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['now'] = timezone.now()
+		return context
 	
+			
+	''' new way
+	def get(self, request, *args, **kwargs):
+		is_battery_search = False # hardcoded
+		
+		try:
+			search = request.GET['search']
+		except:
+			search=''
+		
 		if search != '':	
 			if is_battery_search:
 				search_result = LaptopBattery.objects.filter(article__contains=search)
-				
 			else: # search by laptop model instead 
-				search_result = LaptopBattery.objects.filter(batterydescription__compatible_models__contains=search)
-	
+				search_result = LaptopBattery.objects.filter(batterydescription__compatible_models__contains=search)	
 		else: # empty search
 			search_result = None
 				
-	#else: # request.method == 'GET'
-	#	search_result = None
 		
+		return render(request, self.template_name, {
+			'is_battery_search': is_battery_search,
+			'search': search,
+			'search_result': search_result,
+			#'batteries_list': 'hello',
+			
+			})
+	
+	'''
+	#form = self.form_class(initial=self.initial)
+	
+	
+	''' old stuff
+	try:
+		search = request.GET['search']
+	except:
+		search=''
+			
+	if search != '':	
+		if is_battery_search:
+			search_result = LaptopBattery.objects.filter(article__contains=search)
+			
+		else: # search by laptop model instead 
+			search_result = LaptopBattery.objects.filter(batterydescription__compatible_models__contains=search)
+	
+	else: # empty search
+		search_result = None
+					
+	context = { "search" : search, "search_result": search_result, "is_battery_search": is_battery_search}		
+	''' 
+
+
+
+
+# search - GET requset
+def search_all(request, is_battery_search=True, search='', search_result=''):
+	try:
+		search = request.GET['search']
+	except:
+		search=''
+			
+	if search != '':	
+		if is_battery_search:
+			search_result = LaptopBattery.objects.filter(article__contains=search)
+			
+		else: # search by laptop model instead 
+			search_result = LaptopBattery.objects.filter(batterydescription__compatible_models__contains=search)
+
+	else: # empty search
+		search_result = None
+					
 	context = { "search" : search, "search_result": search_result, "is_battery_search": is_battery_search}		
 	
 	return render(request, 'accum_articles/search_all.html', context)
-'''
-	
+
+''' using POST
 def search_all(request, is_battery_search=True, search='', search_result=''):
 	
 	if request.method == 'POST':
@@ -59,14 +144,27 @@ def search_all(request, is_battery_search=True, search='', search_result=''):
 	context = { "search" : search, "search_result": search_result, "is_battery_search": is_battery_search}		
 	
 	return render(request, 'accum_articles/search_all.html', context)
+'''
 
 def view_battery(request, article, id, is_battery_search):
 	battery = LaptopBattery.objects.get(id=id)	
 	context = {"battery": battery, "is_battery_search":is_battery_search}
 	
 	return render(request, 'accum_articles/battery_view.html', context)
-	
 
+class BatteryDetailView(DetailView):
+	model = LaptopBattery
+	template_name="accum_articles/battery_detail_view.html"
+	context_object_name = "battery"
+
+	#test
+	def get_context_data(self, **kwargs):          
+		context = super().get_context_data(**kwargs)                     
+		new_context_entry = "here it goes"
+		context["new_context_entry"] = new_context_entry
+		return context
+		
+''' unused views
 def simlpe_view_battery(request, id):
 	battery = LaptopBattery.objects.get(id=id)	
 	context = {"battery": battery}
@@ -80,7 +178,9 @@ def simlpe_view_battery_desc(request, id):
 	context = {"battery": battery}
 	
 	return render(request, 'accum_articles/battery_view.html', context)
-	
+'''
+
+''' # using manual form 
 def simple_add(request):
 	article = None
 	context = {}
@@ -97,21 +197,47 @@ def simple_add(request):
 		#return HttpResponseRedirect(reverse('accum_articles:simple_add'),context) # context doesn't work
 			
 	return render(request, 'accum_articles/simple_create.html', context)
+'''
+
+# using form validation
+def simple_add(request): 
+	article = None
+	context = {}
+	context["manufacturers_list"]=LaptopBattery.MANUFACTURER_CHOICES
+	
+	if request.method == 'POST':
+		form = ArticleForm(request.POST)
+		if form.is_valid():
+			
+			#article = form.fields.article #request.POST['article']
+			article = form.cleaned_data['article'] # works fine
+			manufacturer = form.cleaned_data['manufacturer']
+			new_battery = LaptopBattery.objects.create(article=article, manufacturer=manufacturer)
+			context ["battery"]= new_battery
+			context ["battery"]= new_battery
+			
+			context["created"]= True
+			#print(context)
+			form = ArticleForm()
+			context['form'] = form
+			
+		return render(request, 'accum_articles/simple_create.html',  context )
+		#return HttpResponseRedirect(reverse('accum_articles:simple_add'),context) # context doesn't work
+	else: #GET
+		form = ArticleForm()
+		context['form'] = form 	
+		print(context)	
+	return render(request, 'accum_articles/simple_create.html',  context)
+
 	
 def simple_add_desc(request):
 	selected_id = None
 	context = {}
-	batteries = LaptopBattery.objects.all()
-	context["batteries_list"] = LaptopBattery.objects.all()
+	context["batteries_list"] = LaptopBattery.objects.filter(batterydescription__isnull=True)
+
+	#VL FIX
+	context["batteries_without_description"] = LaptopBattery.objects.filter(batterydescription__isnull=True).exists()
 	
-	context["batteries_without_description"] = False
-	for battery in batteries:
-		try:
-			if battery.batterydescription:
-				pass
-		except:
-			context["batteries_without_description"] = True
-			print(battery.id)
 	
 	if request.method == 'POST':
 		selected_id = request.POST['battery_id']
@@ -124,8 +250,8 @@ def simple_add_desc(request):
 		new_description.compatible_articles = selected_compatible_articles
 		new_description.save() # prevents TypeError
 		context["description"]= new_description
-		context["created"] = True
-		print(context)		
+		context["created"] = True		
+		context["batteries_without_description"] = LaptopBattery.objects.filter(batterydescription__isnull=True).exists()
 		
 		return render(request, 'accum_articles/simple_create_desc.html', context)
 		#return HttpResponseRedirect(reverse('accum_articles:simple_add_desc'), context) # context doesn't work
@@ -199,3 +325,31 @@ def csv_add(request):
 			)
 		
 	return render(request, 'accum_articles/csv_add.html')
+
+def csv_gen(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="batteries.csv"'
+
+    writer = csv.writer(response)
+    counter = 0
+    for article in list(LaptopBattery.objects.all()):
+	    counter += 1 
+	    writer.writerow([counter, article])
+
+    return response
+    
+
+def csv_show(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="batteries.csv"'
+	
+	csv_data = list(LaptopBattery.objects.all())
+	print(csv_data)
+	
+	t = loader.get_template('accum_articles/csv_show.html')
+	c = {'data':csv_data}
+	response.write(t.render(c))
+	
+	return response

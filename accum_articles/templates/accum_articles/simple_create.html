@@ -13,24 +13,19 @@
   
   <body>
 	<br>
+	
+	
 	<div class="container">
 		<h2>Add new battery</h2>
-		
-		<form method="POST" action= {% url 'accum_articles:simple_add' %} > {% csrf_token %}
+		<form action="{% url 'accum_articles:simple_add' %}" method="post">
 			
-			<p> Add article <input type="text" name="article" required maxlength="24" /></p>
-
-			<p>Choose manufacturer:
-				<select name="manufacturer">
-					{% for manufacturer in manufacturers_list %}}
-							<option value="{{ manufacturer }}">{{ manufacturer|first }}</option>
-					{% endfor %}
-				</select>
-			</p>
-			
-			<p><input type="submit" value="add" /></p>
-
+			{% csrf_token %}
+			{{ form.as_p }}
+		<input type="submit" value="+ADD">
 		</form>
+	</div>
+	
+	<div class="container">	
 
 		{% if created == True %}
 			<p>Battery <b> {{ battery }} </b> has been successfully added!</p>
