@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+#from accum_articles import urls 
 
 # Create your models here.
 		
@@ -17,8 +19,9 @@ class LaptopBattery(models.Model):
 		return self.article 
 		
 	def get_absolute_url(self):
-		return "%i" %self.id
-
+		return reverse('accum_articles:detail_battery', args=[str(self.id)])
+  
+  
 class BatteryDescription(models.Model):
 	
 	compatible_articles = models.CharField(max_length=24, null=True)
@@ -29,5 +32,5 @@ class BatteryDescription(models.Model):
 		return  self.compatible_models 
 	
 	def get_absolute_url(self):
-		return "%i" %self.battery.id
+		return reverse('accum_articles:detail_battery', args=[str(self.battery.id)])
 	

@@ -1,0 +1,22 @@
+{% extends "accum_articles/base.html" %} 
+
+ {% block content %} 
+	<div class="container">
+		<h2>Part Number - <strong>{{ battery }}</strong></h2>
+		<ul>
+			<li>Manufacturer - <b> {{ battery.manufacturer }} </b></li>
+			<li>Compatible Part Numbers -  <b> {{ battery.batterydescription.compatible_articles }} </b></li>
+			<li>Compatible Notebooks -  <b> {{ battery.batterydescription }} </b></li>
+		</ul>
+
+		 
+		{% if is_battery_search %}
+			<a href="{% url 'accum_articles:search_battery' %}">back to  battery search</a>
+		{% else %}
+			<a href="{% url 'accum_articles:search_laptop' %}">back to  laptop search</a>
+		{% endif %}
+
+		
+	</div>
+ {% endblock %}
+

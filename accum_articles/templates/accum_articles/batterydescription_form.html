@@ -1,0 +1,14 @@
+{% extends "accum_articles\base.html" %}
+
+{% block content %}
+	<div class="container">
+		<form method="post">{% csrf_token %}
+			{{ form.as_p }}
+			<input type="submit" value="Save">
+		</form>
+		<br><hr>
+		<p><a href="{% url 'accum_articles:simple_admin' %}">back to admin</a></p>
+
+	</div>
+{% endblock %}
+
