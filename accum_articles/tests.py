@@ -12,12 +12,12 @@ class SimpleTests(SimpleTestCase):
 		self.assertEqual(response.status_code, 200)
 		
 	def test_laptop_search_page_status_code(self):
-		response = self.client.get('/laptop_search')
+		response = self.client.get('/laptop_search/')
 		self.assertEqual(response.status_code, 200)
 
 
 	def test_battery_search_page_status_code(self):
-		response = self.client.get('/battery_search')
+		response = self.client.get('/battery_search/')
 		self.assertEqual(response.status_code, 200)
 
 
@@ -100,9 +100,9 @@ class BatteryTest(TestCase):
 		self.assertEqual(str(battery), battery.article)
 		
 	def test_absolute_url(self):
-		self.assertEqual(self.battery.get_absolute_url(), '/1/')	
-			
-
+		test_url_name = '/detail_battery/1/'
+		self.assertEqual(self.battery.get_absolute_url(), test_url_name)	
+		
 	
 		
 	
