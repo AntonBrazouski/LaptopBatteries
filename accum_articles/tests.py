@@ -14,11 +14,12 @@ class SimpleTests(SimpleTestCase):
 	def test_laptop_search_page_status_code(self):
 		response = self.client.get('/laptop_search')
 		self.assertEqual(response.status_code, 200)
-		
+
+
 	def test_battery_search_page_status_code(self):
 		response = self.client.get('/battery_search')
 		self.assertEqual(response.status_code, 200)
-	
+
 
 class AllViewsTests(TestCase):
 	
@@ -29,29 +30,29 @@ class AllViewsTests(TestCase):
 		response = self.client.get('/')
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, 'Battery Finder')
-		self.assertTemplateUsed(response, 'accum_articles/search_all.html', 'accum_articles/base.html')
+		self.assertTemplateUsed(response, 'accum_articles/battery_list_view.html', 'accum_articles/base.html')
 
 		
 	def test_view_search_laptop_url_by_name(self):  
 		response = self.client.get(reverse('accum_articles:search_laptop'))		
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, 'Battery Finder')
-		self.assertTemplateUsed(response, 'accum_articles/search_all.html', 'accum_articles/base.html')
+		self.assertTemplateUsed(response, 'accum_articles/battery_list_view.html', 'accum_articles/base.html')
 
-		
+
 	def test_view_search_battery_url_by_name(self):  
 		response = self.client.get(reverse('accum_articles:search_battery'))		
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, 'Battery Finder')
-		self.assertTemplateUsed(response, 'accum_articles/search_all.html', 'accum_articles/base.html')
+		self.assertTemplateUsed(response, 'accum_articles/battery_list_view.html', 'accum_articles/base.html')
 
 
 	def test_view__battery_url_by_name(self):  
-		response = self.client.get(reverse('accum_articles:view_battery', args=(1, 'test_art',True)))		
+		response = self.client.get(reverse('accum_articles:detail_battery', args=(1, )))		
 		self.assertEqual(response.status_code, 200)
-		no_response = self.client.get(reverse('accum_articles:view_battery', args=('2', 'test_art', 'False'))) #error	
+		no_response = self.client.get(reverse('accum_articles:detail_battery', args=(2, ))) 	
 		self.assertContains(response, 'test_art')
-		self.assertTemplateUsed(response, 'accum_articles/battery_view.html')
+		self.assertTemplateUsed(response, 'accum_articles/battery_detail_view.html')
 		self.assertEqual(no_response.status_code, 404) 
 	
 	def test_view_simple_admin_url_by_name(self):  
@@ -79,8 +80,8 @@ class AllViewsTests(TestCase):
 	
 	
 	def test_view_detail_by_name(self):
-		response = self.client.get(reverse('accum_articles:detail', args=('1'))) # ?? '1' - str ?
-		no_response = self.client.get(reverse('accum_articles:detail', args=('2'))) 	
+		response = self.client.get(reverse('accum_articles:detail_battery', args=('1'))) # ?? '1' - str ?
+		no_response = self.client.get(reverse('accum_articles:detail_battery', args=('2'))) 	
 
 		self.assertEqual(response.status_code, 200)
 		self.assertEqual(no_response.status_code, 404) 

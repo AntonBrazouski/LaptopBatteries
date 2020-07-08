@@ -1,8 +1,8 @@
-{% extends "accum_articles\admin.html" %}
+{% extends "accum_articles\base.html" %}
 
-{% block simple_admin %}
-
-
+{% block content %}
+<div class = "container">
+	<h2>Welcome, admin!</h2>
 	<p>Here is what you can do:</p>
 	<ul>
 		Basic
@@ -10,14 +10,13 @@
 		<li><a href="{% url 'accum_articles:simple_add' %}"> add battery </a></li>	
 		<li><a href="{% url 'accum_articles:simple_add_desc' %}"> add battery description </a></li>
 		<br>
-		<br>
 		Advanced
 		<hr>
 		<li><a href="{% url 'accum_articles:csv_add' %}"> add batteries from a CSV file </a></li>
 		<li><a href="{% url 'accum_articles:csv_gen' %}"> download the batteries as a CSV file </a></li>	
 		<li><a href="{% url 'accum_articles:csv_show' %}"> show the batteries CSV file on the page (under development) </a></li>	
 	</ul>
-
+	<hr>
 	<p><a href="{% url 'accum_articles:search_battery' %}">back to search</a></p>
-
+</div>
 {% endblock %}

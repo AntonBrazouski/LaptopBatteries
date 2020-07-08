@@ -3,30 +3,21 @@
 
 
 
-{% block search_all %}
-
-<hr>
-{{ now }}
-
-{% for battery in batteries_list %}
- {{ battery }} 
-{% endfor %}
-<hr>
-
-	
+{% block content %}
+	<div class="container" align="center">
 	{% if is_battery_search %}
-		<form method="GET" action="{% url 'accum_articles:search_battery' %}">
+		<form method="GET" action="{% url 'accum_articles:search_battery' is_battery_search=True %}">
 	{% else %}
-		<form method="GET" action="{% url 'accum_articles:search_laptop' %}">
+		<form method="GET" action="{% url 'accum_articles:search_laptop' is_battery_search=False %}">
 	{% endif %}
 		
 				
 		{% if is_battery_search %}
 			<b>  battery  </b> 
-			/ <a href="{% url 'accum_articles:search_laptop' %}">  laptop model</a>
+			/ <a href="{% url 'accum_articles:search_laptop' is_battery_search=False %}">  laptop model</a>
  
 		{% else %}
-			<a href="{% url 'accum_articles:search_battery' %}"> battery</a>  
+			<a href="{% url 'accum_articles:search_battery' is_battery_search=True %}"> battery</a>  
 			/ <b> laptop model</b>
 		{% endif %}
 		</input>
@@ -40,8 +31,15 @@
 	<div align="left">
 		{% if search_result %} 
 			{% for battery in search_result %}
-				<p> <b> <a href="{% url 'accum_articles:view_battery' article=battery id=battery.id is_battery_search=is_battery_search%}">{{ battery }}</a> </b>
-				 /  {{ battery.batterydescription }}</p>
+				{% if is_battery_search %}
+					<p><b> <a href="{% url 'accum_articles:detail_battery' pk=battery.id is_battery_search=True%}">{{ battery }}</a> </b>
+					
+					/  {{ battery.batterydescription }}</p>
+				{% else %}
+					<p> <b> <a href="{% url 'accum_articles:detail_laptop' pk=battery.id is_battery_search=False%}">{{ battery }}</a> </b>	
+					/  {{ battery.batterydescription }}</p>
+				{% endif %}
+				
 			
 			{% endfor %}
 
@@ -52,6 +50,7 @@
 			<p>nothing found </p>
 		
 		{% endif %}	
+	</div>
 	</div>
 {% endblock %}
 
