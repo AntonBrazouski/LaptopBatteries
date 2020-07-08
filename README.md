@@ -7,6 +7,7 @@ Web app for finding batteries by laptop model
 4. Change all the views to Class based - 90% done.
 5. Detail view with a parameter - done.
 6. Feature is not used in CBV. - wip.
+
 7 db.sqlite - ignored (.gitignore) - done.
 8. requirements.txt - done.
 
